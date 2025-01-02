@@ -1,0 +1,44 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: parking-entry
+  labels:
+    k8s-app: parking-entry
+    tier: backend
+    env: prod
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: parking-entry
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        k8s-app: parking-entry
+    spec:
+      terminationGracePeriodSeconds: 60
+      containers:
+        - name: parking-entry
+          image: parking-entry
+          livenessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+            initialDelaySeconds: 30
+            timeoutSeconds: 5
+          readinessProbe:
+            httpGet:
+              path: /
+              port: 8080
+              scheme: HTTP
+          ports:
+            - containerPort: 443
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 410m
+          memory: 512Mi

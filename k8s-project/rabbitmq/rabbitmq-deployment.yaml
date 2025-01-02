@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rabbitmq
+spec:
+  selector:
+    matchLabels:
+      app: rabbitmq
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        tier: backend
+        app: rabbitmq
+      annotations:
+        prometheus.io/scrape: "true"
+        prometheus.io/port: "15692"
+    spec:
+      containers:
+        - name: rabbitmq
+          image: rabbitmq:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 5672
+            - containerPort: 15672
+            - containerPort: 15692
+          env:
+            - name: RABBITMQ_DEFAULT_VHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: rabbitmq-configmap
+                  key: rabbitmq-default-vhost
+            - name: RABBITMQ_DEFAULT_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: rabbitmq-configmap
+                  key: rabbitmq-default-user
+            - name: RABBITMQ_DEFAULT_PASS
+              valueFrom:
+                secretKeyRef:
+                  name: rabbitmq-secret
+                  key: rabbitmq-default-pass
+          livenessProbe:
+            tcpSocket:
+              port: 5672
+          readinessProbe:
+            exec:
+              command:
+                - bash
+                - -ec
+                - rabbitmq-diagnostics -q ping

@@ -1,0 +1,13 @@
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: kube-system
+  name: pricing
+  labels:
+    k8s-app: pricing
+spec:
+  ports:
+    - port: 1183
+      targetPort: 5104
+  selector:
+    k8s-app: pricing

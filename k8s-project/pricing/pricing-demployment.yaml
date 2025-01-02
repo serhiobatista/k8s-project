@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: pricing
+  labels:
+    k8s-app: pricing
+    tier: backend
+    env: prod
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: pricing
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        k8s-app: pricing
+    spec:
+      containers:
+        - name: pricing
+          image: pricing
+          ports:
+            - containerPort: 1183
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 410m
+          memory: 512Mi

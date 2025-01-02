@@ -1,0 +1,31 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: payment
+  labels:
+    k8s-app: payment
+    tier: backend
+    env: prod
+  namespace: kube-system
+spec:
+  selector:
+    matchLabels:
+      k8s-app: payment
+  replicas: 3
+  template:
+    metadata:
+      labels:
+        k8s-app: payment
+    spec:
+      containers:
+        - name: payment
+          image: payment
+          ports:
+            - containerPort: 4200
+      resources:
+        requests:
+          cpu: 25m
+          memory: 64Mi
+        limits:
+          cpu: 410m
+          memory: 512Mi

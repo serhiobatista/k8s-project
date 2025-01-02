@@ -1,0 +1,14 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: start_notification
+spec:
+  template:
+    spec:
+      containers:
+        - name: notification
+          image: python
+          command:
+            - /bin/sh
+            - -c
+            - "python send_notification.py"
